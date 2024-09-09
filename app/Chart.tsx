@@ -42,7 +42,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function Chart({ chartData }: { chartData: any }) {
+interface ChartData {
+  hops: string;
+  mean: number;
+  median: number;
+  mode: number;
+  trimmedMean20: number;
+  trimmedMean40: number;
+}
+
+export default function Chart({ chartData }: { chartData: ChartData[] }) {
   return (
     <Card className="w-4/5">
       <CardHeader>
