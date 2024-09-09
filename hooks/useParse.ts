@@ -10,8 +10,7 @@ export default function useParse(filePath: string) {
         const sanitizedObj: any = {};
         for (const [key, value] of Object.entries(row)) {
           if (!key.includes("_") && key !== '') {
-            if (value === "#N/A") { sanitizedObj[lodash.camelCase(key)] = 0 }
-            else
+            if (value !== "#N/A")
               sanitizedObj[lodash.camelCase(key)] = value;
           }
         }

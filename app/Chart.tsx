@@ -1,13 +1,10 @@
 "use client";
-
-import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -35,6 +32,14 @@ const chartConfig = {
     label: "Mode",
     color: "hsl(var(--chart-3))",
   },
+  trimmedMean20: {
+    label: "Trimmed Mean 20%",
+    color: "hsl(var(--chart-1))",
+  },
+  trimmedMean40: {
+    label: "Trimmed Mean 40%",
+    color: "hsl(var(--chart-2))",
+  },
 } satisfies ChartConfig;
 
 export default function Chart({ chartData }: { chartData: any }) {
@@ -45,14 +50,15 @@ export default function Chart({ chartData }: { chartData: any }) {
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={chartConfig} className="relative">
           <BarChart accessibilityLayer data={chartData}>
+            <CartesianGrid vertical={false} />
             <XAxis
               dataKey="hops"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={() => ""}
+              hide
             />
             <Bar
               dataKey="mean"
@@ -74,12 +80,53 @@ export default function Chart({ chartData }: { chartData: any }) {
             />
 
             <ChartTooltip
-              content={<ChartTooltipContent indicator="line" />}
+              content={
+                <ChartTooltipContent indicator="line" hideLabel={false} />
+              }
               cursor={false}
               defaultIndex={1}
             />
             <ChartLegend content={<ChartLegendContent />} />
           </BarChart>
+        </ChartContainer>
+        <ChartContainer
+          config={chartConfig}
+          className="aspect-auto h-[250px] w-full"
+        >
+          <LineChart
+            accessibilityLayer
+            data={chartData}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="hops"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              minTickGap={32}
+              tickFormatter={() => ""}
+            />
+            <ChartTooltip
+              content={<ChartTooltipContent className="w-[150px]" />}
+            />
+            <Line
+              dataKey="trimmedMean20"
+              stroke={`var(--color-trimmedMean20)`}
+              strokeWidth={2}
+              dot={false}
+            />
+            <Line
+              dataKey="trimmedMean40"
+              stroke={`var(--color-trimmedMean40)`}
+              strokeWidth={2}
+              dot={false}
+            />
+            <ChartLegend content={<ChartLegendContent />} />
+          </LineChart>
         </ChartContainer>
       </CardContent>
     </Card>
