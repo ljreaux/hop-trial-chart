@@ -3,6 +3,7 @@ import Papa from "papaparse";
 import lodash from "lodash";
 export default function useParse(filePath: string) {
   const [data, setData] = useState<any[]>(null!);
+  const [filters, setFilters] = useState(data ? Object.keys(data[0]) : []);
 
   function sanitizeData(data: any[]) {
     const sanitized: any[] =
@@ -26,11 +27,30 @@ export default function useParse(filePath: string) {
         download: true,
         header: true,
         complete: (results) => {
-          setData(sanitizeData(results.data));
+          const data = sanitizeData(results.data)
+          setData(data);
+          setFilters(Object.keys(data[0]))
         },
       }
     );
+
   }, [filePath])
 
-  return data;
+  const sortData = (filter: string) => {
+    if (!filters.length) return
+    let sorted;
+
+    if (filter !== "hops")
+      sorted = data.sort((a, b) => {
+        return b[filter] - a[filter]
+      });
+    else sorted = data.sort((a, b) => {
+      return a.hops.toLowerCase().localeCompare(b.hops.toLowerCase())
+    });
+
+    setData(sorted);
+  }
+
+
+  return { data, filters, sortData };
 }
