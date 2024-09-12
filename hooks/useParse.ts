@@ -38,15 +38,20 @@ export default function useParse(filePath: string) {
 
   const sortData = (filter: string) => {
     if (!filters.length) return
-    let sorted;
 
-    if (filter !== "hops")
-      sorted = data.sort((a, b) => {
-        return b[filter] - a[filter]
-      });
-    else sorted = data.sort((a, b) => {
-      return a.hops.toLowerCase().localeCompare(b.hops.toLowerCase())
+
+
+    const sorted = data.sort((a, b) => {
+      const valA = a[filter]
+      const valB = b[filter]
+
+      if (!valB) return -1
+      if (!valA) return 1
+
+      if (filter !== "hops") return parseFloat(valB) - parseFloat(valA)
+      return valA.toLowerCase().localeCompare(valB.toLowerCase())
     });
+
 
     setData(sorted);
   }
