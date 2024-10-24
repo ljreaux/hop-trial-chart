@@ -1,5 +1,13 @@
 "use client";
-import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import {
   Card,
@@ -41,6 +49,14 @@ const chartConfig = {
     label: "Trimmed Mean 40%",
     color: "hsl(var(--chart-2))",
   },
+  meanMinusDev: {
+    label: "Mean - Standard Deviation",
+    color: "hsl(var(--chart-2))",
+  },
+  meanPlusDev: {
+    label: "Mean + Standard Deviation",
+    color: "hsl(var(--chart-3))",
+  },
 } satisfies ChartConfig;
 
 interface ChartData {
@@ -50,6 +66,8 @@ interface ChartData {
   mode: number;
   trimmedMean20: number;
   trimmedMean40: number;
+  meanMinusDev: number;
+  meanPlusDev: number;
 }
 
 export default function Chart({
@@ -59,6 +77,20 @@ export default function Chart({
   chartData: ChartData[];
   chartRef: MutableRefObject<HTMLDivElement | null>;
 }) {
+  const xAxisProps = {
+    dataKey: "hops",
+    tickLine: false,
+    axisLine: false,
+    tickMargin: 8,
+    minTickGap: 32,
+    hide: true,
+    padding: { left: 10 },
+  };
+  const ticks = [];
+  for (let i = 20; i <= 50; i += 5) {
+    ticks.push(i);
+  }
+  const trimmedMeanTicks = ticks.slice(2, -1);
   return (
     <Card className="w-full" ref={chartRef}>
       <CardHeader>
@@ -69,6 +101,7 @@ export default function Chart({
         <ChartContainer config={chartConfig} className="relative">
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
+
             <XAxis
               dataKey="hops"
               tickLine={false}
@@ -109,22 +142,12 @@ export default function Chart({
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"
         >
-          <LineChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
+          <LineChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="hops"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              minTickGap={32}
-              tickFormatter={() => ""}
+            <XAxis {...xAxisProps} />
+            <YAxis
+              domain={[trimmedMeanTicks[0], trimmedMeanTicks[-1]]}
+              ticks={trimmedMeanTicks}
             />
             <ChartTooltip
               content={<ChartTooltipContent className="w-[150px]" />}
@@ -141,6 +164,39 @@ export default function Chart({
               strokeWidth={2}
               dot={false}
             />
+            <ChartLegend content={<ChartLegendContent />} />
+          </LineChart>
+        </ChartContainer>
+        <ChartContainer
+          config={chartConfig}
+          className="aspect-auto h-[250px] w-full my-4"
+        >
+          <LineChart accessibilityLayer data={chartData}>
+            <CartesianGrid vertical={false} />
+            <XAxis {...xAxisProps} />
+            <YAxis domain={[ticks[0], ticks[-1]]} ticks={ticks} />
+            <ChartTooltip
+              content={<ChartTooltipContent className="w-[150px]" />}
+            />
+            <Line
+              dataKey="mean"
+              stroke={`var(--color-mean)`}
+              strokeWidth={2}
+              dot={false}
+            />
+            <Line
+              dataKey="meanMinusDev"
+              stroke={`var(--color-meanMinusDev)`}
+              strokeWidth={2}
+              dot={false}
+            />
+            <Line
+              dataKey="meanPlusDev"
+              stroke={`var(--color-meanPlusDev)`}
+              strokeWidth={2}
+              dot={false}
+            />
+
             <ChartLegend content={<ChartLegendContent />} />
           </LineChart>
         </ChartContainer>

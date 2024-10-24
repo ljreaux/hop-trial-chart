@@ -15,8 +15,11 @@ export default function useParse(filePath: string) {
               sanitizedObj[lodash.camelCase(key)] = value;
           }
         }
+        sanitizedObj.meanMinusDev = parseFloat(sanitizedObj.mean) - parseFloat(sanitizedObj.standardDeviation);
+        sanitizedObj.meanPlusDev = parseFloat(sanitizedObj.mean) + parseFloat(sanitizedObj.standardDeviation);
         return sanitizedObj;
       });
+    console.log(sanitized)
     return sanitized;
   }
 
