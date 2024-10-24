@@ -16,6 +16,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { MutableRefObject } from "react";
 
 export const description = "Data Obtained by MMM at Mead Stampede 2024.";
 
@@ -51,9 +52,15 @@ interface ChartData {
   trimmedMean40: number;
 }
 
-export default function Chart({ chartData }: { chartData: ChartData[] }) {
+export default function Chart({
+  chartData,
+  chartRef,
+}: {
+  chartData: ChartData[];
+  chartRef: MutableRefObject<HTMLDivElement | null>;
+}) {
   return (
-    <Card className="w-4/5">
+    <Card className="w-full" ref={chartRef}>
       <CardHeader>
         <CardTitle>40 Hops Mead Test</CardTitle>
         <CardDescription>{description}</CardDescription>
